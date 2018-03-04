@@ -5,7 +5,7 @@ APP_DB_USER=vagrant
 APP_DB_PASS=root
 
 # Edit the following to change the name of the database that is created (defaults to the user name)
-APP_DB_NAME=catalogDB
+APP_DB_NAME=$APP_DB_USER
 
 # Edit the following to change the version of PostgreSQL that is installed
 PG_VERSION=9.4
@@ -60,6 +60,9 @@ then
 fi
 
 # Update package list and upgrade all packages
+apt-get update
+apt-get -y upgrade
+
     apt-get -qqy update
 
     # Work around https://github.com/chef/bento/issues/661

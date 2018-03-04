@@ -15,5 +15,5 @@ class Item(Base):
     description = Column(String(500), nullable=False)
 
 
-engine = create_engine('postgresql://vagrant:root@localhost:5432/catalogDB')
+engine = create_engine('postgresql://vagrant:root@localhost:5432/vagrant')
 Base.metadata.create_all(engine)
