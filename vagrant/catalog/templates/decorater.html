@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+Cataloger
+{% endblock %}
+
+{% block imports %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link href="https://fonts.googleapis.com/css?family=Lato|Roboto" rel="stylesheet">
+<script type="text/javascript" src="{{ url_for('static', filename='js/models.js') }}"></script>
+{% endblock %}
+
+{% block header %}
+<div class="container">
+	<div class="row header-strip">
+		<div class="col-md-5 offset-md-1 ">
+			<div align="left">
+				<a class="header-title-font header-title-font-hover" href="{{ url_for('dashboard') }}">
+					Cataloger
+				</a>
+			</div>
+		</div>
+		<div class="col-md-5">
+			{% block userstate %}{% endblock %}
+		</div>
+	</div>
+</div>
+{% endblock %}

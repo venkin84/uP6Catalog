@@ -1,0 +1,73 @@
+{% extends "decorater.html" %}
+
+<!-- {% block imports %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/models.js') }}"></script>
+{% endblock %} -->
+
+{% block userstate %}
+<div align="right">
+	<a class="header-link-font" href="#"> Login </a>
+</div>
+{% endblock %} {% block sections %}
+<section class="container">
+	<div class="row">
+		<div class="col-md-10 offset-md-1">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="row">
+						<!-- <div class="col-md-12">
+							Categories
+						</div>
+						{% for category in categories %}
+						<div class="col-md-12">
+							{{ category }}
+						</div>
+						{% endfor %} -->
+
+						<div class="col-md-12" id="tree">
+							<ul>
+								<li>
+									<span class="invisible">
+										<img alt="" src="static/img/open-iconic-master/svg/minus.svg">
+									</span>
+									Cat1
+									<ul>
+										<li>
+											<span class="invisible">
+												<img alt="" src="static/img/open-iconic-master/svg/minus.svg">
+											</span>
+											Item one
+										</li>
+										<li>
+											<span class="invisible">
+												<img alt="" src="static/img/open-iconic-master/svg/minus.svg">
+											</span>
+											Item two
+										</li>
+									</ul>
+								</li>
+								<li>
+									<span class="invisible">
+										<img alt="" src="static/img/open-iconic-master/svg/minus.svg">
+									</span>
+									Cat2
+								</li>
+								<li>
+									<span class="invisible">
+										<img alt="" src="static/img/open-iconic-master/svg/minus.svg">
+									</span>
+									Cat3
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="vl"></div>
+			</div>
+		</div>
+	</div>
+</section>
+<script type="text/javascript"
+	src="{{ url_for('static', filename='js/controller.js') }}"></script>
+{% endblock %}
