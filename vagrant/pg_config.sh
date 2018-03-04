@@ -74,8 +74,6 @@ fi
     pip2 install sqlalchemy flask-sqlalchemy psycopg2 bleach requests
     vagrantTip="[35m[1mThe shared directory is located at /vagrant\\nTo access your shared files: cd /vagrant[m"
     echo -e $vagrantTip > /etc/motd
-    make
-    make install
 
 apt-get -y install "postgresql-$PG_VERSION" "postgresql-contrib-$PG_VERSION"
 
