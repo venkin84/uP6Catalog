@@ -1,0 +1,50 @@
+{% extends "decorater.html" %} {% block sections %}
+<section class="container">
+	<div class="row">
+		<div
+			class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12">
+			<form class="form-horizontal" action="#" method="post" id="addItem">
+				<p class="margin-form-title form-text form-title-text">Add an
+					Item</p>
+				<div class="alert alert-danger alert-text" role="alert"
+					style="display: none" id="errorNotification">Action Failed
+					Notification</div>
+				<div class="alert alert-success alert-text" role="alert"
+					style="display: none" id="successNotification">Action Success
+					Notification</div>
+				<div class="form-group">
+					<div class="col-xs-12">
+						<label class="form-text form-body-label" for="itemName">
+							Item Name </label>
+						<div class="error-text" style="display: none">Error
+							Notification</div>
+						<input type="text"
+							class="form-control form-body-text textbox-size" name="itemName"
+							placeholder="Enter the Category Name to Add" maxlength="50"
+							value="{{itemName}}" id="itemName">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-xs-12">
+						<label class="form-text form-body-label" for="itemName">
+							Item Description </label>
+						<div class="error-text" style="display: none">Error
+							Notification</div>
+						<input type="text"
+							class="form-control form-body-text textbox-size" name="itemDescription"
+							placeholder="Enter the Category Name to Add" maxlength="50"
+							value="{{itemDescription}}" id="itemDescription">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-xs-12">
+						<input type="submit"
+							class="btn btn-default btn-single form-body-text margin-form-submit"
+							value="Add Category" id="submit">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>
+{% endblock %}

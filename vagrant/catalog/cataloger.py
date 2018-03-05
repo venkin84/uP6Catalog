@@ -1,13 +1,15 @@
-from flask import Flask, render_template
+from flask import Flask
+from pageHandlers import dashboardPage, addCategoryPage
 
 app = Flask(__name__)
 
-cats = ["Soccer", "Basketball", "Baseball", "Frisbee", "Snowboarding", "Rock Climbing", "Football", "Skating", "Hockey"]
-
-
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 def dashboard():
-    return render_template('dashboard.html', categories=cats)
+    return dashboardPage()
+
+@app.route('/category/add', methods = ['GET', 'POST'])
+def addCategory():
+    return addCategoryPage()
 
 
 if __name__ == '__main__':
