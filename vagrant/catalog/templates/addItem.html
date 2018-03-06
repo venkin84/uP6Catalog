@@ -12,6 +12,7 @@
 				<div class="alert alert-success alert-text" role="alert"
 					style="display: none" id="successNotification">Action Success
 					Notification</div>
+				<input type="hidden" name="itemID" value="{{item.id}}">
 				<div class="form-group">
 					<div class="col-xs-12">
 						<label class="form-text form-body-label" for="itemName">
@@ -20,27 +21,43 @@
 							Notification</div>
 						<input type="text"
 							class="form-control form-body-text textbox-size" name="itemName"
-							placeholder="Enter the Category Name to Add" maxlength="50"
-							value="{{itemName}}" id="itemName">
+							placeholder="Enter the Item Name to Add" maxlength="50"
+							value="{{item.name}}" id="itemName">
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-xs-12">
-						<label class="form-text form-body-label" for="itemName">
+						<label class="form-text form-body-label" for="itemDescription">
 							Item Description </label>
 						<div class="error-text" style="display: none">Error
 							Notification</div>
-						<input type="text"
-							class="form-control form-body-text textbox-size" name="itemDescription"
-							placeholder="Enter the Category Name to Add" maxlength="50"
-							value="{{itemDescription}}" id="itemDescription">
+						<textarea name="itemDescription" rows="5" cols="65">
+							{{item.description}}
+						</textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-xs-12">
+						<label class="form-text form-body-label" for="categoryID">
+							Belongs to Category </label>
+						<div class="error-text" style="display: none">Error
+							Notification</div>
+						<select class="form-control" id="categoryID" name= "categoryID">
+							{% for category in categories %}
+								{% if (selectedCategory|int == category.id) %}
+									<option value={{category.id}} selected>{{category.name}}</option> 
+								{% else %}
+									<option value={{category.id}}>{{category.name}}</option> 
+								{% endif %}
+							{% endfor %}
+						</select>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-xs-12">
 						<input type="submit"
 							class="btn btn-default btn-single form-body-text margin-form-submit"
-							value="Add Category" id="submit">
+							value="Add Item" id="submit">
 					</div>
 				</div>
 			</form>

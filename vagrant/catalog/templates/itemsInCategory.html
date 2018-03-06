@@ -76,6 +76,16 @@
 						{% for category in categories %}
 						<li>
 							<a href="{{url_for('viewItems', categoryID = category.id)}}">{{category.name}}</a>
+							<span>
+								<a href="{{url_for('editCategory', categoryID = category.id)}}">
+									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/pencil.svg') }}">
+								</a>
+							</span>
+							<span>
+								<a href="{{url_for('deleteCategory', categoryID = category.id)}}">
+									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/trash.svg') }}">
+								</a>
+							</span>
 						</li>
 						{% endfor %}
 						<li>
@@ -93,14 +103,24 @@
 		
 		<div class="col-md-8">
 			<div class="row">
-				<div class="col-md-12">Latest Items</div>
+				<div class="col-md-12">Item for the Category '{{category.name}}'</div>
 			</div>
 			<div class="row">
 				<div class="col-md-12">
 					<ul>
 						{% for item in items %}
-						<li>{{item.name}}</li>
+						<li>
+							<a href="{{url_for('viewItem', itemID = item.id) }}">{{item.name}}</a>
+						</li>
 						{% endfor %}
+						<li>
+							<span>
+								<a href="{{url_for('addItem', selectedCategory = category.id)}}">
+									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/plus.svg') }}">
+									Add an Item
+								</a>
+							</span>
+						</li>
 					</ul>
 				</div>
 			</div>
