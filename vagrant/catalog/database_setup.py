@@ -15,7 +15,7 @@ class Category(Base):
     id = Column(Integer, Sequence('category_id_seq'), primary_key=True)
     name = Column(String(50), nullable=False)
     created_date = Column(DateTime, default=datetime.datetime.utcnow())
-    items = relationship("Item")
+    items = relationship("Item", cascade="all, delete, delete-orphan")
 
 
 class Item(Base):
@@ -26,6 +26,16 @@ class Item(Base):
     description = Column(String(500), nullable=False)
     created_date = Column(DateTime, default=datetime.datetime.utcnow())
     category_id = Column(Integer, ForeignKey('category.id'))
+    
+    @property
+    def serialize(self):
+        return {
+           'id'          : self.id,
+           'name'        : self.name,
+           'description' : self.description,
+           'category'    : self.category_id,
+           'created_date': [self.created_date.strftime("%Y-%m-%d"), self.created_date.strftime("%H:%M:%S")]
+        }
     
 
 engine = create_engine('postgresql://vagrant:root@localhost:5432/vagrant')

@@ -1,9 +1,9 @@
 {% extends "decorater.html" %}
 
-<!-- {% block imports %}
+{% block imports %}
 {{ super() }}
-<script type="text/javascript" src="{{ url_for('static', filename='js/models.js') }}"></script>
-{% endblock %} -->
+<script type="text/javascript" src="{{ url_for('static', filename='js/controller.js') }}"></script>
+{% endblock %}
 
 {% block userstate %}
 <div align="right">
@@ -110,7 +110,29 @@
 					<ul>
 						{% for item in items %}
 						<li>
-							<a href="{{url_for('viewItem', itemID = item.id) }}">{{item.name}}</a>
+							<a class="itemName" data-toggle="collapse" href="#description{{item.id}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+							    {{item.name}}
+							    <span hidden>{{item.id}}</span>
+							</a>
+							
+							<div class="collapse" id="description{{item.id}}">
+								<div class="card card-body">
+								    Some Text
+								</div>
+							</div>
+						
+							<span id="item"></span>
+							<!-- <a href="{{url_for('viewItem', itemID = item.id) }}">{{item.name}}</a> -->
+							<span>
+								<a href="{{url_for('editItem', itemID = item.id)}}">
+									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/pencil.svg') }}">
+								</a>
+							</span>
+							<span>
+								<a href="{{url_for('deleteItem', itemID = item.id)}}">
+									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/trash.svg') }}">
+								</a>
+							</span>
 						</li>
 						{% endfor %}
 						<li>
