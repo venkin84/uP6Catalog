@@ -2,7 +2,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 
-from database_setup import Category, Item
+from database_setup import Category, Item, User
 
 Base = declarative_base()
 engine = create_engine('postgresql://vagrant:root@localhost:5432/vagrant')
@@ -14,7 +14,7 @@ session = DBSession()
 
 class DBOperations ():
     
-# CRUDL Operations for Category Table
+    # CRUDL Operations for Category Table
 
     def addCategory(self, categoryInstance):
         session.add(categoryInstance)
@@ -40,7 +40,7 @@ class DBOperations ():
         return True
 
     
-# CRUDL Operations for Item Table
+    # CRUDL Operations for Item Table
 
     def addItem (self, categoryID, itemInstance):
         if session.query(Category).filter(Category.id == categoryID) != None:
@@ -68,3 +68,23 @@ class DBOperations ():
         session.delete(itemToDelete)
         session.commit()
         return True
+    
+    
+    # CRUDL Operations for Users Table
+    
+    def addUser (self, userInstance):
+        session.add(userInstance)
+        session.commit()
+        return True
+    
+    def fetchUser (self, email_address):
+        return session.query(User).filter(User.email_address == email_address).one()
+    
+    def isUserAdmin(self, email_address):
+        user = session.query(User).filter(User.email_address == email_address).one()
+        if user != None:
+            if user.is_admin:
+                return True
+        return False
+            
+            

@@ -3,11 +3,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy import Sequence
-from sqlalchemy.sql.sqltypes import DateTime
+from sqlalchemy.sql.sqltypes import DateTime, Boolean
 import datetime
 
 Base = declarative_base()
-
 
 class Category(Base):
     __tablename__ = 'category'
@@ -37,6 +36,12 @@ class Item(Base):
            'created_date': [self.created_date.strftime("%Y-%m-%d"), self.created_date.strftime("%H:%M:%S")]
         }
     
+class User(Base):
+    __tablename__ = 'users'
+    
+    name = Column(String(150), nullable=False)
+    email_address = Column(String(250), nullable=False, primary_key=True)
+    is_admin = Column(Boolean, default=False)
 
 engine = create_engine('postgresql://vagrant:root@localhost:5432/vagrant')
 Base.metadata.create_all(engine)
