@@ -41,6 +41,7 @@ class User(Base):
     
     name = Column(String(150), nullable=False)
     email_address = Column(String(250), nullable=False, primary_key=True)
+    identity_server = Column(String(250), nullable=False)
     is_admin = Column(Boolean, default=False)
 
 engine = create_engine('postgresql://vagrant:root@localhost:5432/vagrant')

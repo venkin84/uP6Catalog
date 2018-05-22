@@ -1,6 +1,6 @@
 import random, string
 
-from flask import request, render_template, redirect, url_for
+from flask import request, render_template, redirect, url_for, make_response
 from flask import session as login_session
 from database_setup import Category, Item
 from dbUtils import DBOperations
@@ -11,16 +11,16 @@ clientID = "433420290668-lohrcharee0mud3j66f8j0eful3nb3f2.apps.googleusercontent
 
 # Login Page
 def loginPage():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
-    login_session['state'] = state
-    return render_template('loginpage.html', clientID = clientID, STATE = state)
+    print request.cookies.get('aToken')
+    return render_template('loginpage.html')
 
 
 # DashBoard
 def dashboardPage():
     categories = dbOperations.fetchCategories()
-    return render_template('dashboard.html', categories=categories)
+    response = make_response(render_template('dashboard.html', categories=categories))
+    response.set_cookie('cookie', 'test cookie')
+    return response
 
 
 # Create a Category

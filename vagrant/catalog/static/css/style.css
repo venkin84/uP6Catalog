@@ -11,6 +11,19 @@ img, embed, object, video {
 	--header-title-font-size: 36px;
 	--header-link-font-size: 22px;
 	--header-font-color: #ffffff;
+
+	/* Section Header Variables */
+	--section-header-height: 35px;
+	--section-header-font: 'Lato', sans-serif;
+	--section-header-font-size: 24px;
+	--section-header-font-color: #4b4b4b;
+
+
+	/* Section Body Variables */
+	--section-body-height: 30px;
+	--section-body-font: 'Lato', sans-serif;
+	--section-body-font-size: 20px;
+	--section-body-font-color: #4b4b4b;
 }
 
 
@@ -19,10 +32,7 @@ img, embed, object, video {
 	height: var(--header-height);
 	line-height: var(--header-height);
 	background-color: var(--header-color);
-	
-	
 	font-family: var(--header-font);
-	
 	margin-bottom: 20px;
 }
 
@@ -43,6 +53,44 @@ img, embed, object, video {
 	font-size: var(--header-link-font-size);
 }
 
+/* Section Title Styling */
+.section-title {
+	height: var(--section-header-height);
+	line-height: var(--section-header-height);
+	font-family: var(--section-header-font);
+	color: var(--section-header-font-color);
+	font-size: var(--section-header-font-size);
+	margin-bottom: 15px;
+	font-weight: bolder;
+}
+
+
+/* Section Body Text Styling */
+.section-body {
+	height: var(--section-body-height);
+	line-height: var(--section-body-height);
+	font-family: var(--section-body-font);
+	color: var(--section-body-font-color);
+	font-size: var(--section-body-font-size);
+}
+
+.section-body-hover:hover {
+	color: var(--section-body-font-color);
+	font-size: var(--section-body-font-size);
+	text-decoration: none;
+}
+
+
+/* Section Inline Image Alignment */
+.section-img-inline {
+	height: 1.13em;
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+.button-margins {
+	margin: 8px;
+}
 
 .vl {
     border-left: 3px solid var(--header-color);

@@ -1,29 +1,37 @@
 from flask import Flask
 
-from pageHandlers import dashboardPage, addCategoryPage, editCategoryPage, deleteCategoryPage
+from pageHandlers import dashboardPage, addCategoryPage, editCategoryPage, deleteCategoryPage, loginPage
 from pageHandlers import addItemPage, viewItemsPage, editItemPage, deleteItemPage
 from apiHandlers import viewAnItem
-from loginHandlers import authPage, oauth2callback, authRevoke
+from gloginHandlers import gAuthorize, gOAuth2CallbackHandler, gOAuth2RevokeHandler
 
 import os
 
 app = Flask(__name__)
 
 
-# Create anti-forgery state token
-@app.route('/authorize')
-def authorize():
-    return authPage()
+# Login Related Links
+@app.route('/login', methods=['GET'])
+def login():
+    return loginPage()
+
+# For Google Authentication
+@app.route('/gLogin')
+def gLogin():
+    return gAuthorize()
 
 
-@app.route('/oauth2callback')
-def oauth2Callback():
-    return oauth2callback()
+@app.route('/gOAuth2Callback')
+def gOAuth2Callback():
+    return gOAuth2CallbackHandler()
 
 
-@app.route('/revoke')
-def revoke():
-    return authRevoke()
+@app.route('/gRevoke')
+def gRevoke():
+    return gOAuth2RevokeHandler()
+
+
+
 
 
 # Dashboard Page
