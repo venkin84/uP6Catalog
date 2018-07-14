@@ -1,154 +1,131 @@
 {% extends "decorater.html" %}
 
 {% block imports %}
-{{ super() }}
-<script type="text/javascript" src="{{ url_for('static', filename='js/controller.js') }}"></script>
+    {{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/controller.js') }}"></script>
 {% endblock %}
 
 {% block userstate %}
-<div align="right">
-	<a class="header-link-font" href="#"> Login </a>
-</div>
-{% endblock %} {% block sections %}
-<section class="container">
-	<div class="row">
-		<!-- <div class="col-md-10 offset-md-1">
-			<div class="row">
-				<div class="col-md-3">
-					<div class="row">
-						<div class="col-md-12">
-							Categories
-						</div>
-						{% for category in categories %}
-						<div class="col-md-12">
-							{{ category }}
-						</div>
-						{% endfor %}
+    {% if not user %}
+        <div align="right">
+            <a class="header-link-font header-link-font-hover" href="{{ url_for('login') }}"> Login </a>
+        </div>
+    {% else %}
+        <div align="right">
+            <div class="row">
+                <div class="col-md-8">
+                    <span class="header-link-font">{{ user.name }}</span>
+                </div>
+                <div class="col-md-4">
+                    <a class="header-link-font header-link-font-hover" href="{{ url_for('logout') }}"> Logout </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
 
-						<div class="col-md-12" id="tree">
-							<ul>
-								<li>
-									<span class="invisible">
-										<img alt="" src="static/img/open-iconic-master/svg/minus.svg">
-									</span>
-									Cat1
-									<ul>
-										<li>
-											<span class="invisible">
-												<img alt="" src="static/img/open-iconic-master/svg/minus.svg">
-											</span>
-											Item one
-										</li>
-										<li>
-											<span class="invisible">
-												<img alt="" src="static/img/open-iconic-master/svg/minus.svg">
-											</span>
-											Item two
-										</li>
-									</ul>
-								</li>
-								<li>
-									<span class="invisible">
-										<img alt="" src="static/img/open-iconic-master/svg/minus.svg">
-									</span>
-									Cat2
-								</li>
-								<li>
-									<span class="invisible">
-										<img alt="" src="static/img/open-iconic-master/svg/minus.svg">
-									</span>
-									Cat3
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="vl"></div>
-			</div>
-		</div> -->
-		<div class="col-md-4">
-			<div class="row">
-				<div class="col-md-12">
-					Categories
-				</div>
-				<div class="col-md-12">
-					<ul>
-						{% for category in categories %}
-						<li>
-							<a href="{{url_for('viewItems', categoryID = category.id)}}">{{category.name}}</a>
-							<span>
-								<a href="{{url_for('editCategory', categoryID = category.id)}}">
-									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/pencil.svg') }}">
-								</a>
-							</span>
-							<span>
-								<a href="{{url_for('deleteCategory', categoryID = category.id)}}">
-									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/trash.svg') }}">
-								</a>
-							</span>
-						</li>
-						{% endfor %}
-						<li>
-							<span>
-								<a href="{{url_for('addCategory')}}">
-									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/plus.svg') }}">
-									Add a Category
-								</a>
-							</span>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		
-		<div class="col-md-8">
-			<div class="row">
-				<div class="col-md-12">Item for the Category '{{category.name}}'</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<ul>
-						{% for item in items %}
-						<li>
-							<a class="itemName" data-toggle="collapse" href="#description{{item.id}}" role="button" aria-expanded="false" aria-controls="collapseExample">
-							    {{item.name}}
-							    <span hidden>{{item.id}}</span>
-							</a>
-							
-							<div class="collapse" id="description{{item.id}}">
-								<div class="card card-body">
-								    Some Text
-								</div>
-							</div>
-						
-							<span id="item"></span>
-							<!-- <a href="{{url_for('viewItem', itemID = item.id) }}">{{item.name}}</a> -->
-							<span>
-								<a href="{{url_for('editItem', itemID = item.id)}}">
-									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/pencil.svg') }}">
-								</a>
-							</span>
-							<span>
-								<a href="{{url_for('deleteItem', itemID = item.id)}}">
-									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/trash.svg') }}">
-								</a>
-							</span>
-						</li>
-						{% endfor %}
-						<li>
-							<span>
-								<a href="{{url_for('addItem', selectedCategory = category.id)}}">
-									<img alt="" src="{{ url_for('static', filename='img/open-iconic-master/svg/plus.svg') }}">
-									Add an Item
-								</a>
-							</span>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>	
-	</div>
-</section>
-<script type="text/javascript"
-	src="{{ url_for('static', filename='js/controller.js') }}"></script>
+{% block sections %}
+    <section class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        Categories
+                    </div>
+                    <div class="col-md-12">
+                        <ul>
+                            {% for category in categories %}
+                                <li>
+                                    <a href="{{ url_for('viewItems', categoryID = category.id) }}">{{ category.name }}</a>
+                                    {% if user %}
+                                        <span>
+                                            <a href="{{ url_for('editCategory', categoryID = category.id) }}">
+                                                <img alt=""
+                                                     src="{{ url_for('static', filename='img/open-iconic-master/svg/pencil.svg') }}">
+                                            </a>
+                                        </span>
+                                        {% if user.role == 2 %}
+                                            <span>
+                                                <a href="{{ url_for('deleteCategory', categoryID = category.id) }}">
+                                                    <img alt=""
+                                                         src="{{ url_for('static', filename='img/open-iconic-master/svg/trash.svg') }}">
+                                                </a>
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                            {% if user %}
+                                <li>
+                                    <span>
+                                        <a href="{{ url_for('addCategory') }}">
+                                            <img alt=""
+                                                 src="{{ url_for('static', filename='img/open-iconic-master/svg/plus.svg') }}">
+                                            Add a Category
+                                        </a>
+                                    </span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12">Item for the Category '{{ category.name }}'</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul>
+                            {% for item in items %}
+                                <li>
+                                    <a class="itemName" data-toggle="collapse" href="#description{{ item.id }}"
+                                       role="button" aria-expanded="false" aria-controls="collapseExample">
+                                        {{ item.name }}
+                                        <span hidden>{{ item.id }}</span>
+                                    </a>
+                                    {% if user %}
+                                        <span>
+                                            <a href="{{ url_for('editItem', itemID = item.id) }}">
+                                                <img alt=""
+                                                     src="{{ url_for('static', filename='img/open-iconic-master/svg/pencil.svg') }}">
+                                            </a>
+                                        </span>
+                                        {% if user.role == 2 %}
+                                            <span>
+                                                <a href="{{ url_for('deleteItem', itemID = item.id) }}">
+                                                    <img alt=""
+                                                         src="{{ url_for('static', filename='img/open-iconic-master/svg/trash.svg') }}">
+                                                </a>
+                                            </span>
+                                        {%  endif %}
+                                    {%  endif %}
+
+                                    <div class="collapse" id="description{{ item.id }}">
+                                        <div class="card card-body">
+                                            {{ item.description }}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            {% if user %}
+                                <li>
+                                    <span>
+                                        <a href="{{ url_for('addItem', selectedCategory = category.id) }}">
+                                            <img alt=""
+                                                 src="{{ url_for('static', filename='img/open-iconic-master/svg/plus.svg') }}">
+                                            Add an Item
+                                        </a>
+                                    </span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script type="text/javascript"
+            src="{{ url_for('static', filename='js/controller.js') }}"></script>
 {% endblock %}

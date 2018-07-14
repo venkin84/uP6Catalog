@@ -1,5 +1,5 @@
 from flask import jsonify
-from dbUtils import DBOperations
+from dbHandlers.dbUtils import DBOperations
 
 dbOperations = DBOperations()
 

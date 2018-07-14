@@ -1,10 +1,11 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy import Sequence
 from sqlalchemy.sql.sqltypes import DateTime, Boolean
 import datetime
+
 
 Base = declarative_base()
 
@@ -41,8 +42,16 @@ class User(Base):
     
     name = Column(String(150), nullable=False)
     email_address = Column(String(250), nullable=False, primary_key=True)
-    identity_server = Column(String(250), nullable=False)
-    is_admin = Column(Boolean, default=False)
+    identity_server = Column(Integer, nullable=False)
+    role = Column(Integer, default=1)
 
 engine = create_engine('postgresql://vagrant:root@localhost:5432/vagrant')
 Base.metadata.create_all(engine)
+
+class IdentityServer(Enum):
+    google = 1
+    facebook = 2
+
+class UserRole(Enum):
+    user = 1
+    admin = 2

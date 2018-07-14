@@ -1,13 +1,8 @@
-import random, string
-
 from flask import request, render_template, redirect, url_for, make_response
-from flask import session as login_session
-from database_setup import Category, Item
-from dbUtils import DBOperations
+from dbHandlers.database_setup import Category, Item
+from dbHandlers.dbUtils import DBOperations
 
 dbOperations = DBOperations()
-
-clientID = "433420290668-lohrcharee0mud3j66f8j0eful3nb3f2.apps.googleusercontent.com"
 
 # Login Page
 def loginPage():
@@ -16,98 +11,140 @@ def loginPage():
 
 
 # DashBoard
-def dashboardPage():
+def dashboardPage(user):
     categories = dbOperations.fetchCategories()
-    response = make_response(render_template('dashboard.html', categories=categories))
-    response.set_cookie('cookie', 'test cookie')
+    items = dbOperations.fetchLatestItems()
+    response = make_response(render_template('dashboard.html',
+                                             user=user,
+                                             categories=categories,
+                                             items=items))
     return response
 
 
 # Create a Category
-def addCategoryPage():
-    if request.method == 'POST':
-        categoryToAdd = Category(name=request.form.get('categoryName'))
-        dbOperations.addCategory(categoryToAdd)
-        
-        return redirect(url_for('dashboard'))
-    
+def addCategoryPage(user):
+    if user:
+        if request.method == 'POST':
+            categoryToAdd = Category(name=request.form.get('categoryName'))
+            dbOperations.addCategory(categoryToAdd)
+
+            return redirect(url_for('dashboard'))
+
+        else:
+            return render_template('addEditCategory.html',
+                                   user = user,
+                                   operation = "Add",
+                                   category = None)
     else:
-        return render_template('addEditCategory.html', operation = "Add", category = None)
+        return redirect(url_for('dashboard'))
 
 # Update a Category
-def editCategoryPage(categoryIDToEdit):
-    if request.method == 'POST':
-        categoryID = request.form.get('categoryID')
-        categoryInstance = Category(name = request.form.get('categoryName'))
-        category = dbOperations.editCategory(categoryID, categoryInstance)
-        
-        return redirect(url_for('dashboard'))
+def editCategoryPage(user, categoryIDToEdit):
+    if user:
+        if request.method == 'POST':
+            categoryID = request.form.get('categoryID')
+            categoryInstance = Category(name = request.form.get('categoryName'))
+            category = dbOperations.editCategory(categoryID, categoryInstance)
+
+            return redirect(url_for('dashboard'))
+        else:
+            category = dbOperations.fetchCategory(categoryIDToEdit)
+            return render_template('addEditCategory.html',
+                                   operation = "Edit",
+                                   category = category,
+                                   user=user)
     else:
-        category = dbOperations.fetchCategory(categoryIDToEdit)
-        return render_template('addEditCategory.html', operation = "Edit", category = category)
+        return redirect(url_for('dashboard'))
 
 # Delete a Category
-def deleteCategoryPage(categoryID):
-    if(dbOperations.deleteCategory(categoryID)):
-        return redirect(url_for('dashboard'))
+def deleteCategoryPage(user, categoryID):
+    if (user.role == 2):
+        if(dbOperations.deleteCategory(categoryID)):
+            return redirect(url_for('dashboard'))
+        else:
+            return redirect(url_for('dashboard'))
     else:
         return redirect(url_for('dashboard'))
     
     
 # Add an Item
-def addItemPage():
-    if request.method == 'POST':
-        categoryID = request.form.get('categoryID')
-        itemName = request.form.get('itemName')
-        itemDescription = request.form.get('itemDescription')
-        
-        itemToAdd = Item(name=itemName, description=itemDescription)
-        dbOperations.addItem(categoryID, itemToAdd)
-        
-        return redirect(url_for('viewItems', categoryID = categoryID))
-    
-    else:
-        if(request.args.get('selectedCategory')):
-            selectedCategory = request.args.get('selectedCategory')
-            categories = dbOperations.fetchCategories()
-            return render_template('addEditItem.html', categories=categories, selectedCategory=selectedCategory, 
-                                   item=None, operation="Add")
+def addItemPage(user):
+    if user:
+        if request.method == 'POST':
+            categoryID = request.form.get('categoryID')
+            itemName = request.form.get('itemName')
+            itemDescription = request.form.get('itemDescription')
+
+            itemToAdd = Item(name=itemName, description=itemDescription)
+            dbOperations.addItem(categoryID, itemToAdd)
+
+            return redirect(url_for('viewItems', categoryID = categoryID))
+
         else:
-            categories = dbOperations.fetchCategories()
-            return render_template('addEditItem.html', categories=categories, selectedCategory=None, item=None,
-                                   operation="Add")
+            if(request.args.get('selectedCategory')):
+                selectedCategory = request.args.get('selectedCategory')
+                categories = dbOperations.fetchCategories()
+                return render_template('addEditItem.html',
+                                       categories=categories,
+                                       selectedCategory=selectedCategory,
+                                       item=None,
+                                       operation="Add",
+                                       user=user)
+            else:
+                categories = dbOperations.fetchCategories()
+                return render_template('addEditItem.html',
+                                       categories=categories,
+                                       selectedCategory=None,
+                                       item=None,
+                                       operation="Add",
+                                       user=user)
+    else:
+        return redirect(url_for('dashboard'))
 
 
 # Read Items in a Category   
-def viewItemsPage(categoryID):
+def viewItemsPage(user, categoryID):
     categories = dbOperations.fetchCategories()
     items = dbOperations.fetchItemsInCategory(categoryID)
     category = dbOperations.fetchCategory(categoryID)
-    return render_template('itemsInCategory.html', categories=categories, items=items,
-                           category=category)
+    return render_template('itemsInCategory.html',
+                           categories=categories,
+                           items=items,
+                           category=category,
+                           user=user)
 
 # Update an Item
-def editItemPage(itemIDToEdit):
-    if request.method == 'POST':
-        categoryID = request.form.get('categoryID')
-        itemID = request.form.get('itemID')
-        itemInstance = Item(name = request.form.get('itemName'),
-                            description = request.form.get('itemDescription'),
-                            category_id = categoryID)
-        dbOperations.editItem(itemID, itemInstance)
-        
-        return redirect(url_for('viewItems', categoryID = categoryID))
+def editItemPage(user, itemIDToEdit):
+    if user:
+        if request.method == 'POST':
+            categoryID = request.form.get('categoryID')
+            itemID = request.form.get('itemID')
+            itemInstance = Item(name = request.form.get('itemName'),
+                                description = request.form.get('itemDescription'),
+                                category_id = categoryID)
+            dbOperations.editItem(itemID, itemInstance)
+
+            return redirect(url_for('viewItems', categoryID = categoryID))
+        else:
+            item = dbOperations.fetchItem(itemIDToEdit)
+            categories = dbOperations.fetchCategories()
+            return render_template('addEditItem.html',
+                                   operation = "Edit",
+                                   item = item,
+                                   categories=categories,
+                                   selectedCategory = item.category_id,
+                                   user = user)
     else:
-        item = dbOperations.fetchItem(itemIDToEdit)
-        categories = dbOperations.fetchCategories()
-        return render_template('addEditItem.html', operation = "Edit", item = item, 
-                               categories=categories, selectedCategory = item.category_id)
+        return redirect(url_for('dashboard'))
 
 # Delete an Item
-def deleteItemPage(itemID):
-    item = dbOperations.fetchItem(itemID)
-    categoryID = item.category_id
-    if(dbOperations.deleteItem(itemID)):
-        return redirect(url_for('viewItems', categoryID = categoryID))
+def deleteItemPage(user, itemID):
+    if (user.role == 2):
+        item = dbOperations.fetchItem(itemID)
+        categoryID = item.category_id
+        if(dbOperations.deleteItem(itemID)):
+            return redirect(url_for('viewItems', categoryID = categoryID))
+        else:
+            return redirect(url_for('viewItems', categoryID = item.category_id))
     else:
-        return redirect(url_for('viewItems', categoryID = item.category_id))
+        return redirect(url_for('dashboard'))

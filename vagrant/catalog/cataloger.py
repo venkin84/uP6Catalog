@@ -1,9 +1,10 @@
-from flask import Flask
+from flask import Flask, redirect, url_for, request
 
 from pageHandlers import dashboardPage, addCategoryPage, editCategoryPage, deleteCategoryPage, loginPage
 from pageHandlers import addItemPage, viewItemsPage, editItemPage, deleteItemPage
 from apiHandlers import viewAnItem
-from gloginHandlers import gAuthorize, gOAuth2CallbackHandler, gOAuth2RevokeHandler
+from authHandlers.gLogin import GLogin, IdentityServer
+from authHandlers.authValidator import validateUser
 
 import os
 
@@ -15,20 +16,29 @@ app = Flask(__name__)
 def login():
     return loginPage()
 
+@app.route('/logout', methods=['GET'])
+def logout():
+    if ('idServer' in request.cookies):
+        if (request.cookies['idServer'] == str(IdentityServer.google)):
+            return redirect(url_for('gRevoke'))
+        else:
+            return redirect(url_for('dashboard'))
+    else:
+        return redirect(url_for('dashboard'))
+
+
 # For Google Authentication
 @app.route('/gLogin')
 def gLogin():
-    return gAuthorize()
-
+    return GLogin.authorize()
 
 @app.route('/gOAuth2Callback')
 def gOAuth2Callback():
-    return gOAuth2CallbackHandler()
-
+    return GLogin.oauth2CallbackHandler()
 
 @app.route('/gRevoke')
 def gRevoke():
-    return gOAuth2RevokeHandler()
+    return GLogin.oauth2RevokeHandler()
 
 
 
@@ -36,38 +46,44 @@ def gRevoke():
 
 # Dashboard Page
 @app.route('/', methods=['GET'])
-def dashboard():
-    return dashboardPage()
+@validateUser
+def dashboard(user):
+    return dashboardPage(user)
 
 
 # Add a Category
 @app.route('/category/add', methods=['GET', 'POST'])
-def addCategory():
-    return addCategoryPage()
+@validateUser
+def addCategory(user):
+    return addCategoryPage(user)
 
 
 # View Items in a Category
 @app.route('/category/<categoryID>/items/view', methods=['GET'])
-def viewItems(categoryID):
-    return viewItemsPage(categoryID)
+@validateUser
+def viewItems(user, categoryID):
+    return viewItemsPage(user, categoryID)
 
 
 # Edit a Category
 @app.route('/category/<categoryID>/edit', methods=['GET', 'POST'])
-def editCategory(categoryID):
-    return editCategoryPage(categoryID)
+@validateUser
+def editCategory(user, categoryID):
+    return editCategoryPage(user, categoryID)
 
 
 # Delete a Category
 @app.route('/category/<categoryID>/delete', methods=['GET'])
-def deleteCategory(categoryID):
-    return deleteCategoryPage(categoryID)
+@validateUser
+def deleteCategory(user, categoryID):
+    return deleteCategoryPage(user, categoryID)
 
 
 # Add an Item
 @app.route('/item/add', methods=['GET', 'POST'])
-def addItem():
-    return addItemPage()
+@validateUser
+def addItem(user):
+    return addItemPage(user)
 
 
 # View an Item API
@@ -78,14 +94,16 @@ def viewItem(itemID):
 
 # Edit an Item
 @app.route('/item/<itemID>/edit', methods=['GET', 'POST'])
-def editItem(itemID):
-    return editItemPage(itemID)
+@validateUser
+def editItem(user, itemID):
+    return editItemPage(user, itemID)
 
 
 # Delete an Item
 @app.route('/item/<itemID>/delete', methods=['GET'])
-def deleteItem(itemID):
-    return deleteItemPage(itemID)
+@validateUser
+def deleteItem(user, itemID):
+    return deleteItemPage(user, itemID)
 
 
 if __name__ == '__main__':

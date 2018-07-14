@@ -53,6 +53,12 @@ img, embed, object, video {
 	font-size: var(--header-link-font-size);
 }
 
+.header-link-font-hover:hover {
+	color: #cce5ff;
+	font-size: var(--header-link-font-size);
+	text-decoration: none;
+}
+
 /* Section Title Styling */
 .section-title {
 	height: var(--section-header-height);
