@@ -30,7 +30,7 @@ Dependencies to run this application are
 
 ### How to Deploy
 Perform the following steps from the `catalog` folder of the solution downloaded in the terminal
-```sh
+```bash
 vagrant up
 vagrant ssh
 cd ../../vagrant/catalog
