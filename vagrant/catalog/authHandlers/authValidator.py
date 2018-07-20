@@ -5,6 +5,7 @@ from dbHandlers.dbUtils import DBOperations
 
 dbOperation = DBOperations()
 
+
 def validateUser(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -33,7 +34,5 @@ def validateUser(fn):
         else:
             # User not Logged In Error
             return fn(user=None, *args, **kwargs)
+
     return wrapper
-
-
-

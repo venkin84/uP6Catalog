@@ -4,6 +4,7 @@ from dbHandlers.dbUtils import DBOperations
 
 dbOperations = DBOperations()
 
+
 # Login Page
 def loginPage():
     print request.cookies.get('aToken')
@@ -25,48 +26,51 @@ def dashboardPage(user):
 def addCategoryPage(user):
     if user:
         if request.method == 'POST':
-            categoryToAdd = Category(name=request.form.get('categoryName'))
+            categoryToAdd = Category(name=request.form.get('categoryName'),
+                                     user_id=user.email_address)
             dbOperations.addCategory(categoryToAdd)
 
             return redirect(url_for('dashboard'))
 
         else:
             return render_template('addEditCategory.html',
-                                   user = user,
-                                   operation = "Add",
-                                   category = None)
+                                   user=user,
+                                   operation="Add",
+                                   category=None)
     else:
         return redirect(url_for('dashboard'))
 
+
 # Update a Category
 def editCategoryPage(user, categoryIDToEdit):
-    if user:
+    category = dbOperations.fetchCategory(categoryIDToEdit)
+    if (user.email_address == category.user_id) or (user.role == 2):
         if request.method == 'POST':
             categoryID = request.form.get('categoryID')
-            categoryInstance = Category(name = request.form.get('categoryName'))
-            category = dbOperations.editCategory(categoryID, categoryInstance)
-
+            categoryInstance = Category(name=request.form.get('categoryName'))
+            dbOperations.editCategory(categoryID, categoryInstance)
             return redirect(url_for('dashboard'))
         else:
-            category = dbOperations.fetchCategory(categoryIDToEdit)
             return render_template('addEditCategory.html',
-                                   operation = "Edit",
-                                   category = category,
+                                   operation="Edit",
+                                   category=category,
                                    user=user)
     else:
         return redirect(url_for('dashboard'))
 
+
 # Delete a Category
 def deleteCategoryPage(user, categoryID):
-    if (user.role == 2):
-        if(dbOperations.deleteCategory(categoryID)):
+    category = dbOperations.fetchCategory(categoryID)
+    if (user.email_address == category.user_id) or (user.role == 2):
+        if (dbOperations.deleteCategory(categoryID)):
             return redirect(url_for('dashboard'))
         else:
             return redirect(url_for('dashboard'))
     else:
         return redirect(url_for('dashboard'))
-    
-    
+
+
 # Add an Item
 def addItemPage(user):
     if user:
@@ -74,14 +78,13 @@ def addItemPage(user):
             categoryID = request.form.get('categoryID')
             itemName = request.form.get('itemName')
             itemDescription = request.form.get('itemDescription')
-
-            itemToAdd = Item(name=itemName, description=itemDescription)
+            itemToAdd = Item(name=itemName, description=itemDescription,
+                             user_id=user.email_address)
             dbOperations.addItem(categoryID, itemToAdd)
-
-            return redirect(url_for('viewItems', categoryID = categoryID))
+            return redirect(url_for('viewItems', categoryID=categoryID))
 
         else:
-            if(request.args.get('selectedCategory')):
+            if (request.args.get('selectedCategory')):
                 selectedCategory = request.args.get('selectedCategory')
                 categories = dbOperations.fetchCategories()
                 return render_template('addEditItem.html',
@@ -113,38 +116,42 @@ def viewItemsPage(user, categoryID):
                            category=category,
                            user=user)
 
+
 # Update an Item
 def editItemPage(user, itemIDToEdit):
-    if user:
+    item = dbOperations.fetchItem(itemIDToEdit)
+    if (item.user_id == user.email_address) or (user.role == 2):
         if request.method == 'POST':
             categoryID = request.form.get('categoryID')
             itemID = request.form.get('itemID')
-            itemInstance = Item(name = request.form.get('itemName'),
-                                description = request.form.get('itemDescription'),
-                                category_id = categoryID)
+            itemInstance = Item(name=request.form.get('itemName'),
+                                description=request.form.get(
+                                    'itemDescription'),
+                                category_id=categoryID,
+                                user_id=user.email_address)
             dbOperations.editItem(itemID, itemInstance)
-
-            return redirect(url_for('viewItems', categoryID = categoryID))
+            return redirect(url_for('viewItems', categoryID=categoryID))
         else:
-            item = dbOperations.fetchItem(itemIDToEdit)
             categories = dbOperations.fetchCategories()
             return render_template('addEditItem.html',
-                                   operation = "Edit",
-                                   item = item,
+                                   operation="Edit",
+                                   item=item,
                                    categories=categories,
-                                   selectedCategory = item.category_id,
-                                   user = user)
+                                   selectedCategory=item.category_id,
+                                   user=user)
     else:
         return redirect(url_for('dashboard'))
 
+
 # Delete an Item
 def deleteItemPage(user, itemID):
-    if (user.role == 2):
+    item = dbOperations.fetchItem(itemID)
+    if (user.role == 2 or user.email_address == item.user_id):
         item = dbOperations.fetchItem(itemID)
         categoryID = item.category_id
-        if(dbOperations.deleteItem(itemID)):
-            return redirect(url_for('viewItems', categoryID = categoryID))
+        if (dbOperations.deleteItem(itemID)):
+            return redirect(url_for('viewItems', categoryID=categoryID))
         else:
-            return redirect(url_for('viewItems', categoryID = item.category_id))
+            return redirect(url_for('viewItems', categoryID=item.category_id))
     else:
         return redirect(url_for('dashboard'))

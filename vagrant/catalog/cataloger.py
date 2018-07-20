@@ -1,7 +1,9 @@
 from flask import Flask, redirect, url_for, request
 
-from pageHandlers import dashboardPage, addCategoryPage, editCategoryPage, deleteCategoryPage, loginPage
-from pageHandlers import addItemPage, viewItemsPage, editItemPage, deleteItemPage
+from pageHandlers import dashboardPage, addCategoryPage, editCategoryPage, \
+    deleteCategoryPage, loginPage
+from pageHandlers import addItemPage, viewItemsPage, editItemPage, \
+    deleteItemPage
 from apiHandlers import viewAnItem
 from authHandlers.gLogin import GLogin, IdentityServer
 from authHandlers.authValidator import validateUser
@@ -15,6 +17,7 @@ app = Flask(__name__)
 @app.route('/login', methods=['GET'])
 def login():
     return loginPage()
+
 
 @app.route('/logout', methods=['GET'])
 def logout():
@@ -32,16 +35,15 @@ def logout():
 def gLogin():
     return GLogin.authorize()
 
+
 @app.route('/gOAuth2Callback')
 def gOAuth2Callback():
     return GLogin.oauth2CallbackHandler()
 
+
 @app.route('/gRevoke')
 def gRevoke():
     return GLogin.oauth2RevokeHandler()
-
-
-
 
 
 # Dashboard Page

@@ -15,18 +15,20 @@ class GLogin:
     dbOperations = DBOperations()
 
     CLIENT_SECRETS_FILE = "authHandlers/gSecret.json"
-    SCOPES = ['profile',
-              'email']
+    SCOPES = ['https://www.googleapis.com/auth/userinfo.email',
+              'https://www.googleapis.com/auth/userinfo.profile']
 
     @staticmethod
     def authorize():
         if ('rToken' in request.cookies):
             accessToken, expires_in = GLogin.oauth2RefreshToken()
             response = make_response(redirect(url_for('dashboard')))
-            if (accessToken != None):
+            if (accessToken is not None):
                 print accessToken + "  " + str(expires_in)
-                response.set_cookie('aToken', value=accessToken, max_age=int(expires_in))
-                response.set_cookie('idServer', value=str(IdentityServer.google))
+                response.set_cookie('aToken', value=accessToken,
+                                    max_age=int(expires_in))
+                response.set_cookie('idServer',
+                                    value=str(IdentityServer.google))
             return response
         else:
             flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
@@ -34,10 +36,12 @@ class GLogin:
 
             flow.redirect_uri = url_for('gOAuth2Callback', _external=True)
 
-            # Without prompt='consent' (apart from access_type='offline') refresh token is not returned
-            authorization_url, state = flow.authorization_url(access_type='offline',
-                                                              include_granted_scopes='true',
-                                                              prompt='consent')
+            # Without prompt='consent' (apart from access_type='offline')
+            # refresh token is not returned
+            authorization_url, state = flow.authorization_url(
+                access_type='offline',
+                include_granted_scopes='true',
+                prompt='consent')
 
             session['state'] = state
             return redirect(authorization_url)
@@ -45,12 +49,14 @@ class GLogin:
     @staticmethod
     def oauth2CallbackHandler():
         state = session['state']
-        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(GLogin.CLIENT_SECRETS_FILE,
-                                                                       scopes=GLogin.SCOPES,
-                                                                       state=state)
+        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+            GLogin.CLIENT_SECRETS_FILE,
+            scopes=GLogin.SCOPES,
+            state=state)
         flow.redirect_uri = url_for('gOAuth2Callback', _external=True)
 
-        # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+        # Use the authorization server's response to fetch the OAuth 2.0
+        # tokens.
         authorization_response = request.url
         flow.fetch_token(code=request.args["code"])
         credentials = flow.credentials
@@ -59,22 +65,27 @@ class GLogin:
 
         # Validating the ID Token
         payload = {'access_token': credentials.token}
-        valResponse = requests.get('https://www.googleapis.com/oauth2/v3/tokeninfo', params=payload)
+        valResponse = requests.get(
+            'https://www.googleapis.com/oauth2/v3/tokeninfo', params=payload)
 
         if (valResponse.status_code == 200):
             valToken = valResponse.json()
 
-            response.set_cookie('aToken', value=credentials.token, max_age=int(valToken['expires_in']))
+            response.set_cookie('aToken', value=credentials.token,
+                                max_age=int(valToken['expires_in']))
             response.set_cookie('rToken',
                                 value=credentials.refresh_token,
-                                expires=time.mktime(GLogin.utc_afterMonths(6).timetuple()))
+                                expires=time.mktime(
+                                    GLogin.utc_afterMonths(6).timetuple()))
             response.set_cookie('idServer',
                                 value=str(IdentityServer.google),
-                                expires=time.mktime(GLogin.utc_afterMonths(6).timetuple()))
+                                expires=time.mktime(
+                                    GLogin.utc_afterMonths(6).timetuple()))
 
-        userProfile = requests.get('https://www.googleapis.com/oauth2/v3/userinfo', params=payload)
+        userProfile = requests.get(
+            'https://www.googleapis.com/oauth2/v3/userinfo', params=payload)
         profile = userProfile.json()
-        user = User(name = profile["name"],
+        user = User(name=profile["name"],
                     email_address=profile["email"],
                     identity_server=IdentityServer.google,
                     role=UserRole.user)
@@ -93,7 +104,8 @@ class GLogin:
             ('client_id', credentials['web']['client_id']),
             ('client_secret', credentials['web']['client_secret']),
             ('grant_type', 'refresh_token'))
-        resp = requests.post('https://www.googleapis.com/oauth2/v4/token', data=payload)
+        resp = requests.post('https://www.googleapis.com/oauth2/v4/token',
+                             data=payload)
         if (resp.status_code == 200):
             r = resp.json()
             print r
@@ -107,11 +119,13 @@ class GLogin:
         response = make_response(redirect(url_for('dashboard')))
 
         if ('aToken' in request.cookies):
-            revokeResp = requests.post('https://accounts.google.com/o/oauth2/revoke',
-                                       params={'token': request.cookies['aToken']})
+            revokeResp = requests.post(
+                'https://accounts.google.com/o/oauth2/revoke',
+                params={'token': request.cookies['aToken']})
         elif ('rToken' in request.cookies):
-            revokeResp = requests.post('https://accounts.google.com/o/oauth2/revoke',
-                                       params={'token': request.cookies['rToken']})
+            revokeResp = requests.post(
+                'https://accounts.google.com/o/oauth2/revoke',
+                params={'token': request.cookies['rToken']})
         else:
             return response
 
@@ -138,7 +152,8 @@ class GLogin:
     @staticmethod
     def validateGToken(access_token):
         payload = {'access_token': access_token}
-        response = requests.get('https://www.googleapis.com/oauth2/v3/userinfo', params=payload)
+        response = requests.get(
+            'https://www.googleapis.com/oauth2/v3/userinfo', params=payload)
         if (response.status_code == 200):
             respData = response.json()
             return respData['email']

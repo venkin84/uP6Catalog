@@ -32,21 +32,19 @@
                             {% for category in categories %}
                                 <li>
                                     <a href="{{ url_for('viewItems', categoryID = category.id) }}">{{ category.name }}</a>
-                                    {% if user %}
+                                    {% if user.role == 2 or user.email_address == category.user_id %}
                                         <span>
                                             <a href="{{ url_for('editCategory', categoryID = category.id) }}">
                                                 <img alt=""
                                                      src="{{ url_for('static', filename='img/open-iconic-master/svg/pencil.svg') }}">
                                             </a>
                                         </span>
-                                        {% if user.role == 2 %}
-                                            <span>
-                                                <a href="{{ url_for('deleteCategory', categoryID = category.id) }}">
-                                                    <img alt=""
-                                                         src="{{ url_for('static', filename='img/open-iconic-master/svg/trash.svg') }}">
-                                                </a>
-                                            </span>
-                                        {% endif %}
+                                        <span>
+                                            <a href="{{ url_for('deleteCategory', categoryID = category.id) }}">
+                                                <img alt=""
+                                                     src="{{ url_for('static', filename='img/open-iconic-master/svg/trash.svg') }}">
+                                            </a>
+                                        </span>
                                     {% endif %}
                                 </li>
                             {% endfor %}
@@ -80,21 +78,19 @@
                                         {{ item.name }}
                                         <span hidden>{{ item.id }}</span>
                                     </a>
-                                    {% if user %}
+                                    {% if user.role == 2 or user.email_address == item.user_id %}
                                         <span>
                                             <a href="{{ url_for('editItem', itemID = item.id) }}">
                                                 <img alt=""
                                                      src="{{ url_for('static', filename='img/open-iconic-master/svg/pencil.svg') }}">
                                             </a>
                                         </span>
-                                        {% if user.role == 2 %}
-                                            <span>
-                                                <a href="{{ url_for('deleteItem', itemID = item.id) }}">
-                                                    <img alt=""
-                                                         src="{{ url_for('static', filename='img/open-iconic-master/svg/trash.svg') }}">
-                                                </a>
-                                            </span>
-                                        {%  endif %}
+                                        <span>
+                                            <a href="{{ url_for('deleteItem', itemID = item.id) }}">
+                                                <img alt=""
+                                                     src="{{ url_for('static', filename='img/open-iconic-master/svg/trash.svg') }}">
+                                            </a>
+                                        </span>
                                     {%  endif %}
 
                                     <div class="collapse" id="description{{ item.id }}">
