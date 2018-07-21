@@ -1,5 +1,10 @@
 {% extends "decorater.html" %}
 
+{% block imports %}
+    {{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/validator.js') }}"></script>
+{% endblock %}
+
 {% block userstate %}
     {% if not user %}
         <div align="right">
@@ -24,7 +29,8 @@
         <div class="row">
             <div
                     class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12">
-                <form class="form-horizontal" action="#" method="post" id="addItem">
+                <form class="form-horizontal" action="#" method="post" id="addItem"
+                      onsubmit="return validateAddItemForm()">
                     <p class="margin-form-title form-text form-title-text">
                         {{ operation }} an Item</p>
                     <div class="alert alert-danger alert-text" role="alert"
@@ -56,7 +62,8 @@
                             <div class="error-text" style="display: none">Error
                                 Notification
                             </div>
-                            <textarea name="itemDescription" rows="5" cols="65" form="addItem">{{ item.description }}</textarea>
+                            <textarea name="itemDescription" rows="5" cols="65"
+                                      form="addItem">{{ item.description }}</textarea>
                         </div>
                     </div>
                     <div class="form-group">
@@ -85,7 +92,7 @@
                                        value="{{ operation }} Item" id="submit">
                             </div>
                         </div>
-                    {%  endif %}
+                    {% endif %}
                 </form>
             </div>
         </div>

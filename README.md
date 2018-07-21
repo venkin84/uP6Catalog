@@ -37,7 +37,7 @@ Perform the following steps one after another in the terminal from the `catalog`
 vagrant up
 vagrant ssh
 cd ../../vagrant/catalog
-python catalog.py
+python cataloger.py
 ```
 This would have deployed the Catalog Application in the local VM. To launch the application navigate to the URL `http://localhost:5000` in the browser
 

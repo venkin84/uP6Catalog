@@ -29,9 +29,7 @@ def addCategoryPage(user):
             categoryToAdd = Category(name=request.form.get('categoryName'),
                                      user_id=user.email_address)
             dbOperations.addCategory(categoryToAdd)
-
             return redirect(url_for('dashboard'))
-
         else:
             return render_template('addEditCategory.html',
                                    user=user,
@@ -82,7 +80,6 @@ def addItemPage(user):
                              user_id=user.email_address)
             dbOperations.addItem(categoryID, itemToAdd)
             return redirect(url_for('viewItems', categoryID=categoryID))
-
         else:
             if (request.args.get('selectedCategory')):
                 selectedCategory = request.args.get('selectedCategory')
